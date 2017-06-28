@@ -9,6 +9,7 @@ import networkx as nx
 from numpy.random import choice
 import pdb
 import copy
+import numpy as np
 
 ##############
 ###TODO
@@ -65,6 +66,8 @@ class Graph:
            self.record.append(record)
            if invalid == 1:
               self.invalidindices.append(rep)
+        self.lastmove = -1
+        self.lastcolor = -1
     
     def RunStrat(self,graph,strategy,bobstrat = None):
         uncolored = list(self.elelist)
@@ -98,10 +101,18 @@ class Graph:
         
     def Alice(self,graph,uncolored,legalcols,strategy):
         if strategy == "D+3":
-            numunc = len(uncolored)
-            ele = choice(range(numunc))
-            ele = uncolored[ele]
-            col = int(choice(legalcols[ele]))
+            if self.lastcolor == -1:
+                numunc = len(uncolored)
+                ele = choice(range(numunc))
+                ele = uncolored[ele]
+                col = int(choice(legalcols[ele]))
+            else:
+                candidates = []
+                for u in uncolored:
+                    candidates.append(len(legalcols[u]))
+                    pick = np.argmin(candidates)
+                    ele = uncolored[pick]
+                    col = int(choice(legalcols[ele]))
             self.lastmove = ele
             self.lastcolor = col
             if type(ele) == tuple :
