@@ -13,9 +13,7 @@ import numpy as np
 
 ##############
 ###TODO
-###DEF CHECK LEGAL
-###DEF LEGAL COLORS
-###CODE ALICE STRAT
+###ANIMATE
 
 class Graph:
     def __init__(self, graph, numcolors):
@@ -128,10 +126,18 @@ class Graph:
     def Bob(self,graph,uncolored,legalcols,bobstrat = None):
         #Algorithm determining Bob's next move. Currently random selection.
         if bobstrat == None:
-            numunc = len(uncolored)
-            ele = choice(range(numunc))
-            ele = uncolored[ele]
-            col = int(choice(legalcols[ele]))
+            candidates = []
+            for u in uncolored:
+                candidates.append(len(legalcols[u]))
+                dangerous = int(np.argmin(candidates))
+                choices = set(self.neighbors[uncolored[dangerous]])&set(uncolored)
+                if list(choices) != []:
+                    ele = list(choices)[0]
+                else:
+                    numunc = len(uncolored)
+                    ele = choice(range(numunc))
+                    ele = uncolored[ele]
+                col = int(choice(legalcols[ele]))
             self.lastmove = ele
             self.lastcolor = col
             if type(ele) == tuple :
@@ -153,6 +159,10 @@ class Graph:
     def SaveGraph(self,idx):
         for i in idx:
             nx.write_gexf(self.colorings[i],'renamelater' + str(i) + '.gexf')
+            
+    def Animate(self,idx):
+        turns = self.record[idx][0]
+        colors = self.record[idx][1]
         
         
             
