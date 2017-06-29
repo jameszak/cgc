@@ -129,14 +129,21 @@ class Graph:
             candidates = []
             for u in uncolored:
                 candidates.append(len(legalcols[u]))
-                dangerous = int(np.argmin(candidates))
-                choices = set(self.neighbors[uncolored[dangerous]])&set(uncolored)
-                if list(choices) != []:
-                    ele = list(choices)[0]
-                else:
-                    numunc = len(uncolored)
-                    ele = choice(range(numunc))
-                    ele = uncolored[ele]
+            dangerous = int(np.argmin(candidates))
+            choices = set(self.neighbors[uncolored[dangerous]])&set(uncolored)
+            if list(choices) != []:
+                for choic in list(choices):
+                    valcols = set(legalcols[choic])
+                    for nei in choices:
+                        valcols.difference(legalcols[nei])
+                    if list(valcols) != []:
+                        ele = choic
+                        col = int(choice(list(valcols)))
+                        break
+            else:
+                numunc = len(uncolored)
+                ele = choice(range(numunc))
+                ele = uncolored[ele]
                 col = int(choice(legalcols[ele]))
             self.lastmove = ele
             self.lastcolor = col
